@@ -1,0 +1,67 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: twitter-cleanup
+  namespace: joe
+spec:
+  schedule: "@daily"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: twitter-cleanup
+            image: quay.io/josephsalisbury/twitter-cleanup:latest
+            args:
+            - following
+            - --twitter-access-token=$(TWITTER_ACCESS_TOKEN)
+            - --twitter-access-token-secret=$(TWITTER_ACCESS_TOKEN_SECRET)
+            - --twitter-consumer-key=$(TWITTER_CONSUMER_KEY)
+            - --twitter-consumer-secret=$(TWITTER_CONSUMER_SECRET)
+            - --notifier=twilio
+            - --twilio-account-sid=$(TWILIO_ACCOUNT_SID)
+            - --twilio-auth-token=$(TWILIO_AUTH_TOKEN)
+            - --twilio-number-from=$(TWILIO_NUMBER_FROM)
+            - --twilio-number-to=$(TWILIO_NUMBER_TO)
+            env:
+            - name: TWITTER_ACCESS_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: twitter-cleanup
+                  key: twitter-access-token
+            - name: TWITTER_ACCESS_TOKEN_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: twitter-cleanup
+                  key: twitter-access-token-secret
+            - name: TWITTER_CONSUMER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: twitter-cleanup
+                  key: twitter-consumer-key
+            - name: TWITTER_CONSUMER_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: twitter-cleanup
+                  key: twitter-consumer-secret
+            - name: TWILIO_ACCOUNT_SID
+              valueFrom:
+                secretKeyRef:
+                  name: twitter-cleanup
+                  key: twilio-account-sid
+            - name: TWILIO_AUTH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: twitter-cleanup
+                  key: twilio-auth-token
+            - name: TWILIO_NUMBER_FROM
+              valueFrom:
+                secretKeyRef:
+                  name: twitter-cleanup
+                  key: twilio-number-to
+            - name: TWILIO_NUMBER_TO
+              valueFrom:
+                secretKeyRef:
+                  name: twitter-cleanup
+                  key: twilio-number-from
+          restartPolicy: Never
