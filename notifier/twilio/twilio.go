@@ -88,8 +88,8 @@ func (t *Twilio) Notify(message string) error {
 		return err
 	}
 
-	if resp.StatusCode != http.StatusOK {
-		t.logger.Printf("Failed to send text message: %s\n", string(body))
+	if resp.StatusCode < 200 || resp.StatusCode > 299 {
+		t.logger.Printf("Failed to send text message: %v %s\n", resp.StatusCode, string(body))
 		return errors.New("Could not send text message")
 	}
 
