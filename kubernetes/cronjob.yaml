@@ -58,10 +58,10 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: twitter-cleanup
-                  key: twilio-number-to
+                  key: twilio-number-from
             - name: TWILIO_NUMBER_TO
               valueFrom:
                 secretKeyRef:
                   name: twitter-cleanup
-                  key: twilio-number-from
+                  key: twilio-number-to
           restartPolicy: Never
