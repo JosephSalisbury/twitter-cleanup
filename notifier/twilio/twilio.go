@@ -3,6 +3,7 @@ package twilio
 import (
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
@@ -77,8 +78,19 @@ func (t *Twilio) Notify(message string) error {
 
 	client := http.Client{}
 
-	if _, err := client.Do(req); err != nil {
+	resp, err := client.Do(req)
+	if err != nil {
 		return err
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		t.logger.Printf("Failed to send text message: %s\n", string(body))
+		return errors.New("Could not send text message")
 	}
 
 	return nil
