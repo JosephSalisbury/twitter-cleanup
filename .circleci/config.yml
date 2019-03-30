@@ -1,0 +1,21 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: docker:18.09.4-git
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          docker login -u $QUAY_USERNAME -p $QUAY_PASSWORD quay.io
+
+          docker build -t quay.io/josephsalisbury/twitter-cleanup:$CIRCLE_BRANCH-$CIRCLE_SHA1 .
+
+          docker push quay.io/josephsalisbury/twitter-cleanup:$CIRCLE_BRANCH-$CIRCLE_SHA1
+
+          if [ "${CIRCLE_BRANCH}" == "master" ]; then
+            docker tag quay.io/josephsalisbury/twitter-cleanup:$CIRCLE_BRANCH-$CIRCLE_SHA1 quay.io/josephsalisbury/twitter-cleanup:latest
+
+            docker push quay.io/josephsalisbury/twitter-cleanup:latest
+
+          fi
