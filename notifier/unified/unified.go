@@ -2,7 +2,6 @@ package unified
 
 import (
 	"errors"
-	"fmt"
 	"log"
 
 	"github.com/JosephSalisbury/twitter-cleanup/notifier"
@@ -20,8 +19,6 @@ type Config struct {
 }
 
 func GetNotifier(notifierType string, config notifier.Config) (notifier.Notifier, error) {
-	fmt.Println(notifierType)
-
 	switch notifierType {
 	case "logger":
 		return logger.New(config)
