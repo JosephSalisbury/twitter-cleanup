@@ -123,5 +123,7 @@ Unfollow:
 		}
 	}
 
+	t.logger.Printf("Unfollowed stale accounts\n")
+
 	return nil
 }
