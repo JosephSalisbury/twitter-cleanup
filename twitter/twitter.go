@@ -69,7 +69,9 @@ func (t *Twitter) UnfollowStaleAccounts(timespan time.Duration, maxUnfollow int)
 
 	unfollow := []anaconda.User{}
 	for page := range t.api.GetFriendsListAll(nil) {
-		t.logger.Printf("Getting next page of friends\n")
+		if page.Error != nil {
+			return page.Error
+		}
 
 		for _, user := range page.Friends {
 			t.logger.Printf("Checking staleness of '%v' (%v)\n", user.Name, user.ScreenName)
@@ -109,6 +111,11 @@ func (t *Twitter) UnfollowStaleAccounts(timespan time.Duration, maxUnfollow int)
 	}
 
 Unfollow:
+	if len(unfollow) == 0 {
+		t.logger.Printf("No stale accounts\n")
+		return nil
+	}
+
 	t.logger.Printf("Unfollowing stale accounts\n")
 
 	for _, user := range unfollow {
